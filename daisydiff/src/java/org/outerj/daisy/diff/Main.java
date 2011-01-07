@@ -37,7 +37,7 @@ public class Main {
         String[] css = new String[]{};
         
         try {
-            for (int i = 2; i < args.length; i++) {
+            for (int i = 3; i < args.length; i++) {
                 String[] split = args[i].split("=");
                 if (split[0].equalsIgnoreCase("--file")) {
                     outputFile = split[1];
@@ -96,82 +96,60 @@ public class Main {
             TransformerHandler result = tf.newTransformerHandler();
             result.setResult(new StreamResult(new File(outputFile)));
             
-            InputStream oldStream, newStream;
+            InputStream ancestorStream, oldStream, newStream;
             
-            if (args[0].startsWith("http://")) {
-                oldStream = new URI(args[0]).toURL().openStream();
-            }
-            else {
-                oldStream = new FileInputStream(args[0]);
-            }
-            if (args[1].startsWith("http://")) {
-                newStream = new URI(args[1]).toURL().openStream();
-            }
-            else {
-                newStream = new FileInputStream(args[1]);
-            }
-
+            ancestorStream = new FileInputStream(args[0]);
+            oldStream = new FileInputStream(args[1]);
+            newStream = new FileInputStream(args[2]);
+            
             XslFilter filter = new XslFilter();
 
-            if (htmlDiff) {
+            ContentHandler postProcess = htmlOut? filter.xsl(result,
+                    "org/outerj/daisy/diff/htmlheader.xsl"):result;
 
-                ContentHandler postProcess = htmlOut? filter.xsl(result,
-                        "org/outerj/daisy/diff/htmlheader.xsl"):result;
+            Locale locale = Locale.getDefault();
+            String prefix = "diff";
 
-                Locale locale = Locale.getDefault();
-                String prefix = "diff";
+            HtmlCleaner cleaner = new HtmlCleaner();
+            
+            InputSource ancestorSource = new InputSource(ancestorStream);
+            InputSource oldSource = new InputSource(oldStream);
+            InputSource newSource = new InputSource(newStream);
+            
+            DomTreeBuilder ancestorHandler = new DomTreeBuilder();
+            cleaner.cleanAndParse(ancestorSource, ancestorHandler);
+            System.out.print(".");
+            TextNodeComparator ancestorComparator = new TextNodeComparator(
+                    ancestorHandler, locale);
 
-                HtmlCleaner cleaner = new HtmlCleaner();
+            DomTreeBuilder oldHandler = new DomTreeBuilder();
+            cleaner.cleanAndParse(oldSource, oldHandler);
+            System.out.print(".");
+            TextNodeComparator leftComparator = new TextNodeComparator(
+                    oldHandler, locale);
 
-                InputSource oldSource = new InputSource(oldStream);
-                InputSource newSource = new InputSource(newStream);
+            DomTreeBuilder newHandler = new DomTreeBuilder();
+            cleaner.cleanAndParse(newSource, newHandler);
+            System.out.print(".");
+            TextNodeComparator rightComparator = new TextNodeComparator(
+                    newHandler, locale);
 
-                DomTreeBuilder oldHandler = new DomTreeBuilder();
-                cleaner.cleanAndParse(oldSource, oldHandler);
-                System.out.print(".");
-                TextNodeComparator leftComparator = new TextNodeComparator(
-                        oldHandler, locale);
+            postProcess.startDocument();
+            postProcess.startElement("", "diffreport", "diffreport",
+                    new AttributesImpl());
+            doCSS(css, postProcess);
+            postProcess.startElement("", "diff", "diff",
+                    new AttributesImpl());
+            HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(postProcess,
+                    prefix);
+            
+            HTMLDiffer differ = new HTMLDiffer(output);
+            differ.diff(ancestorComparator, leftComparator, rightComparator);
+            System.out.print(".");
+            postProcess.endElement("", "diff", "diff");
+            postProcess.endElement("", "diffreport", "diffreport");
+            postProcess.endDocument();
 
-                DomTreeBuilder newHandler = new DomTreeBuilder();
-                cleaner.cleanAndParse(newSource, newHandler);
-                System.out.print(".");
-                TextNodeComparator rightComparator = new TextNodeComparator(
-                        newHandler, locale);
-
-                postProcess.startDocument();
-                postProcess.startElement("", "diffreport", "diffreport",
-                        new AttributesImpl());
-                doCSS(css, postProcess);
-                postProcess.startElement("", "diff", "diff",
-                        new AttributesImpl());
-                HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(postProcess,
-                        prefix);
-                
-                HTMLDiffer differ = new HTMLDiffer(output);
-                differ.diff(leftComparator, rightComparator);
-                System.out.print(".");
-                postProcess.endElement("", "diff", "diff");
-                postProcess.endElement("", "diffreport", "diffreport");
-                postProcess.endDocument();
-
-            } else {
-
-                ContentHandler postProcess = htmlOut? filter.xsl(result,
-                        "org/outerj/daisy/diff/tagheader.xsl"):result;
-                postProcess.startDocument();
-                postProcess.startElement("", "diffreport", "diffreport",
-                        new AttributesImpl());
-                postProcess.startElement("", "diff", "diff",
-                        new AttributesImpl());
-                System.out.print(".");
-                DaisyDiff.diffTag(new BufferedReader(new InputStreamReader(
-                        oldStream)), new BufferedReader(new InputStreamReader(
-                        newStream)), postProcess);
-                System.out.print(".");
-                postProcess.endElement("", "diff", "diff");
-                postProcess.endElement("", "diffreport", "diffreport");
-                postProcess.endDocument();
-            }
 
         } catch (Throwable e) {
           if (quietMode){
