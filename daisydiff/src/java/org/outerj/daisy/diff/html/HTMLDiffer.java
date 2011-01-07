@@ -58,7 +58,7 @@ public class HTMLDiffer implements Differ{
     		int tempKind = d.kind();
     		if (tempKind == RangeDifference.ANCESTOR) {
     			System.out.println("ANCESTOR diff kind: ");
-    			ancestorComparator.markAsDeleted(d.leftStart(), d.leftEnd(), leftComparator, d.ancestorStart(), ModificationType.ADDED);
+    			ancestorComparator.markAsDeleted(d.leftStart(), d.leftEnd(), leftComparator, d.ancestorStart(), ModificationType.NONE);
     		}
 
 			if (d.leftStart() > currentIndexLeft) {
@@ -88,7 +88,7 @@ public class HTMLDiffer implements Differ{
     			// conflicts and changes on the left side
                 if (d.leftLength() > 0) {
                 	ancestorComparator.markAsDeleted(d.leftStart(), d.leftEnd(),
-                			leftComparator, d.ancestorStart(), ModificationType.ADDED);
+                			leftComparator, d.ancestorStart(), ModificationType.NONE);
                 }
     		}
 
@@ -96,7 +96,7 @@ public class HTMLDiffer implements Differ{
     			// conflicts and changes on the right side
                 if (d.rightLength() > 0) {
 	                ancestorComparator.markAsDeleted(d.rightStart(), d.rightEnd(),
-	                		rightComparator, d.ancestorStart(), ModificationType.ADDED);
+	                		rightComparator, d.ancestorStart(), ModificationType.NONE);
                 }
     		}
             

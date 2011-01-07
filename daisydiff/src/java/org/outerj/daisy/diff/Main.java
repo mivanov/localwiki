@@ -105,7 +105,7 @@ public class Main {
             XslFilter filter = new XslFilter();
 
             ContentHandler postProcess = htmlOut? filter.xsl(result,
-                    "org/outerj/daisy/diff/htmlheader.xsl"):result;
+                    "org/outerj/daisy/diff/threeway.xsl"):result;
 
             Locale locale = Locale.getDefault();
             String prefix = "diff";
