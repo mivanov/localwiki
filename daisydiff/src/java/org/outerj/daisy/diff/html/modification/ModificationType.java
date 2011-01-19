@@ -17,39 +17,39 @@ package org.outerj.daisy.diff.html.modification;
 
 public enum ModificationType {
 
-    CHANGED {
-        @Override
-        public String toString() {
-            return "changed";
-        }
-    },
+	CHANGED {
+		@Override
+		public String toString() {
+			return "changed";
+		}
+	},
 
-    REMOVED {
-        @Override
-        public String toString() {
-            return "removed";
-        }
-    },
+	REMOVED {
+		@Override
+		public String toString() {
+			return "removed";
+		}
+	},
 
-    ADDED {
-        @Override
-        public String toString() {
-            return "added";
-        }
-    },
+	ADDED {
+		@Override
+		public String toString() {
+			return "added";
+		}
+	},
 
-    CONFLICT {
-        @Override
-        public String toString() {
-            return "conflict";
-        }
-    },
+	CONFLICT {
+		@Override
+		public String toString() {
+			return "conflict";
+		}
+	},
 
-    NONE {
-        @Override
-        public String toString() {
-            return "none";
-        }
-    };
+	NONE {
+		@Override
+		public String toString() {
+			return "none";
+		}
+	};
 
 }

@@ -19,95 +19,96 @@ import java.util.List;
 
 public class Modification implements Cloneable {
 
-    private ModificationType type;
+	private ModificationType type;
 
-    private ModificationType outputType;
+	private ModificationType outputType;
 
-    private long id = -1;
+	private long id = -1;
 
-    private Modification prevMod = null;
+	private Modification prevMod = null;
 
-    private Modification nextMod = null;
+	private Modification nextMod = null;
 
-    private boolean firstOfID = false;
+	private boolean firstOfID = false;
 
-    private List<HtmlLayoutChange> htmlLayoutChanges = null;
+	private List<HtmlLayoutChange> htmlLayoutChanges = null;
 
-    public Modification(ModificationType type, ModificationType outputType) {
-        this.type = type;
-        this.outputType = outputType;
-    }
+	public Modification(ModificationType type, ModificationType outputType) {
+		this.type = type;
+		this.outputType = outputType;
+	}
 
-    @Override
-    public Modification clone() {
-        Modification newM = new Modification(this.getType(), getOutputType());
-        newM.setID(getID());
-        newM.setChanges(getChanges());
-        newM.setHtmlLayoutChanges(getHtmlLayoutChanges());
-        newM.setFirstOfID(isFirstOfID());
-        newM.setNext(getNext());
-        newM.setPrevious(getPrevious());
-        return newM;
-    }
+	@Override
+	public Modification clone() {
+		Modification newM = new Modification(this.getType(), getOutputType());
+		newM.setID(getID());
+		newM.setChanges(getChanges());
+		newM.setHtmlLayoutChanges(getHtmlLayoutChanges());
+		newM.setFirstOfID(isFirstOfID());
+		newM.setNext(getNext());
+		newM.setPrevious(getPrevious());
+		return newM;
+	}
 
-    public ModificationType getType() {
-        return type;
-    }
+	public ModificationType getType() {
+		return type;
+	}
 
-    /**
-     * Returns the type of this modification regarding output formatting (i.e.
-     * in order to specify how this modification shall be formatted). 
-     * 
-     * In three-way diffs we format "ADDED" modifications as REMOVED, and the
-     * other way round, because the comparison is reversed, compared to a 
-     * two-way diff.
-     * @return the way how this modification shall be formatted
-     */
-    public ModificationType getOutputType() {
-    	return outputType;
-    }
-    
-    public void setID(long id) {
-        this.id = id;
-    }
+	/**
+	 * Returns the type of this modification regarding output formatting (i.e.
+	 * in order to specify how this modification shall be formatted).
+	 * 
+	 * In three-way diffs we format "ADDED" modifications as REMOVED, and the
+	 * other way round, because the comparison is reversed, compared to a
+	 * two-way diff.
+	 * 
+	 * @return the way how this modification shall be formatted
+	 */
+	public ModificationType getOutputType() {
+		return outputType;
+	}
 
-    public long getID() {
-        return id;
-    }
+	public void setID(long id) {
+		this.id = id;
+	}
 
-    public void setPrevious(Modification m) {
-        this.prevMod = m;
-    }
+	public long getID() {
+		return id;
+	}
 
-    public Modification getPrevious() {
-        return prevMod;
-    }
+	public void setPrevious(Modification m) {
+		this.prevMod = m;
+	}
 
-    public void setNext(Modification m) {
-        this.nextMod = m;
-    }
+	public Modification getPrevious() {
+		return prevMod;
+	}
 
-    public Modification getNext() {
-        return nextMod;
-    }
+	public void setNext(Modification m) {
+		this.nextMod = m;
+	}
 
-    private String changes;
+	public Modification getNext() {
+		return nextMod;
+	}
 
-    public void setChanges(final String changes) {
-        this.changes = changes;
-    }
+	private String changes;
 
-    public String getChanges() {
-        return changes;
-    }
+	public void setChanges(final String changes) {
+		this.changes = changes;
+	}
 
-    public boolean isFirstOfID() {
-        return firstOfID;
-    }
+	public String getChanges() {
+		return changes;
+	}
 
-    public void setFirstOfID(boolean firstOfID) {
-        this.firstOfID = firstOfID;
-    }
+	public boolean isFirstOfID() {
+		return firstOfID;
+	}
+
+	public void setFirstOfID(boolean firstOfID) {
+		this.firstOfID = firstOfID;
+	}
 
 	/**
 	 * @return the htmlLayoutChanges
@@ -117,14 +118,11 @@ public class Modification implements Cloneable {
 	}
 
 	/**
-	 * @param htmlLayoutChanges the htmlLayoutChanges to set
+	 * @param htmlLayoutChanges
+	 *            the htmlLayoutChanges to set
 	 */
 	public void setHtmlLayoutChanges(List<HtmlLayoutChange> htmlLayoutChanges) {
 		this.htmlLayoutChanges = htmlLayoutChanges;
 	}
-
-	
-    
-    
 
 }
