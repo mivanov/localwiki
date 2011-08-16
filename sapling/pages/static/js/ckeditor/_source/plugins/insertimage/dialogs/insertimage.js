@@ -51,7 +51,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
         		refreshFiles(dialog.getContentElement('Upload', 'imagePicker'),
         			function(){ selectImage(newUrl) });
         		dialog.uploading = false;
-        		dialog.enableButton('ok');
+        		//dialog.enableButton('ok');
         	}
         };
         
