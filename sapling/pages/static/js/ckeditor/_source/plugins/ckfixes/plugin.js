@@ -34,6 +34,21 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 					command.setState( CKEDITOR.TRISTATE_OFF );
 				
 			});
+			editor.on('selectionChange', function( evt ){
+				var element = evt.data.path.lastElement;
+				if(!element)
+					return;
+				var plugin = jQuery(element.$).closest('.plugin');
+				if(plugin.length)
+				{
+					element = CKEDITOR.dom.element.get(plugin[0]);
+					var selection = editor.getSelection();
+					var ranges = selection.getRanges();
+					ranges[0].setStartAfter(element);
+					ranges[0].setEndAfter(element);
+					selection.selectRanges(ranges);
+				}
+			});
 		},
 		
 		leftOrUpArrow : function ( editor )
