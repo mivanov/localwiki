@@ -12,6 +12,8 @@ var FRIENDLY_CONTAINER_NAMES = {
 	'td': 'Table cell',
 	'th': 'Table header',
 	'p': 'Paragraph',
+	'span': 'Span',
+	'div': 'Div',
 	'a': 'Link',
 	'h1': 'Heading (level 1)',
 	'h2': 'Heading (level 2)',
@@ -20,7 +22,8 @@ var FRIENDLY_CONTAINER_NAMES = {
 	'h5': 'Heading (level 5)',
 	'ul': 'Unordered list',
 	'ol': 'Ordered list',
-	'li': 'List item'
+	'li': 'List item',
+	'img': 'Image'
 };
 
 var FRIENDLY_STYLE_NAMES = {
@@ -235,7 +238,7 @@ function align(a, b)
 function getContentNodes(node)
 {
 	return $(node).contents().map(function (index, elem){
-		if(elem.nodeType === 3)
+		if(elem.nodeType === 3 || elem.nodeName.toLowerCase() == 'img')
 			return elem;
 		else
 			return getContentNodes(elem);
@@ -390,14 +393,26 @@ function mapDiffToDom(left, right, diff)
 	right = right.reverse();
 	diff = diff.reverse();
 	var map = [];
+	var imagesLeft = [];
+	var imagesRight = [];
 	
 	while(diff.length)
 	{
 		var diffSlice = diff.pop();
-		var leftNode = left.pop();
-		var rightNode = right.pop();
-		switch(diffSlice[0])
-		{
+		// TODO: Need to find a better way to compare images.
+		// For now, throw them into two lists and compare lists after this loop.
+		var leftNode, rightNode;
+		do {
+			leftNode = left.pop();
+			if(leftNode && leftNode.nodeName == 'IMG')
+				imagesLeft.push(leftNode);
+		} while(leftNode && leftNode.nodeType != 3);
+		do {
+			rightNode = right.pop();
+			if(rightNode && rightNode.nodeName == 'IMG')
+				imagesRight.push(rightNode);
+		} while(rightNode && rightNode.nodeType != 3);
+		switch(diffSlice[0]){
 			case DIFF_EQUAL:
 				var shortest = Math.min(diffSlice[1].length,
 										leftNode.nodeValue.length,
@@ -425,5 +440,27 @@ function mapDiffToDom(left, right, diff)
 				break;
 		}
 	}
+	$.each(imagesRight, function(index, rightImg){
+		var rightSrc = $(rightImg).attr('src');
+		var found = false;
+		$.each(imagesLeft, function(i, leftImg){
+			if(!rightImg || !leftImg)
+				return;
+			if(rightSrc == $(leftImg).attr('src'))
+			{
+				found = true;
+				map.push([DIFF_EQUAL, leftImg, rightImg]);
+				delete imagesRight[index];
+				delete imagesLeft[i];
+				return false;
+			}
+		});
+		if(!found)
+			map.push([DIFF_INSERT, rightImg]);
+	});
+	$.each(imagesLeft, function(i, leftImg){
+		if(leftImg)
+			map.push([DIFF_DELETE, leftImg]);
+	});
 	return map;
 }
