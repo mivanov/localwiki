@@ -93,38 +93,6 @@ class M12ForeignKey(models.Model):
 versioning.register(M12ForeignKey)
 
 
-class M12ForeignKeysRelatedSpecified(models.Model):
-    a = models.ForeignKey(M2, related_name="g")
-    b = models.CharField(max_length=200)
-
-versioning.register(M12ForeignKeysRelatedSpecified)
-
-
-class M12OneToOneRelatedSpecified(models.Model):
-    a = models.OneToOneField(M2, related_name="h")
-    b = models.CharField(max_length=200)
-
-versioning.register(M12OneToOneRelatedSpecified)
-
-
-class M12ManyToManyRelatedSpecified(models.Model):
-    a = models.ManyToManyField(M2, related_name="i")
-    b = models.CharField(max_length=200)
-
-versioning.register(M12ManyToManyRelatedSpecified)
-
-
-class Unversioned(models.Model):
-    a = models.CharField(max_length=200)
-
-
-class M2MToUnversioned(models.Model):
-    unreg = models.ManyToManyField(Unversioned, related_name="j")
-
-
-versioning.register(M2MToUnversioned)
-
-
 class M13ForeignKeySelf(models.Model):
     a = models.ForeignKey('self', null=True)
     b = models.CharField(max_length=200)
@@ -360,11 +328,31 @@ class M28OneToOneNonVersioned(models.Model):
 
 versioning.register(M28OneToOneNonVersioned)
 
+
+class M29FKToNonVersionedRelatedName(models.Model):
+    a = models.CharField(max_length=200)
+    b = models.ForeignKey(NonVersionedModel, related_name='j')
+
+versioning.register(M29FKToNonVersionedRelatedName)
+
+
+class M30OneToOneNonVersionedRelatedName(models.Model):
+    a = models.CharField(max_length=200)
+    b = models.OneToOneField(NonVersionedModel, related_name='k')
+
+versioning.register(M30OneToOneNonVersionedRelatedName)
+
+
+class M31M2MNonVersionedRelatedName(models.Model):
+    a = models.CharField(max_length=200)
+    b = models.ManyToManyField(NonVersionedModel, related_name='l')
+
+versioning.register(M31M2MNonVersionedRelatedName)
+
+
 TEST_MODELS = [
     M1, M2, M3BigInteger, M4Date, M5Decimal, M6Email, M7Numbers,
-    M8Time, M9URL, M10File, M11Image, M12ForeignKey,
-    M12ForeignKeysRelatedSpecified, M12OneToOneRelatedSpecified,
-    M12ManyToManyRelatedSpecified, M2MToUnversioned,M13ForeignKeySelf,
+    M8Time, M9URL, M10File, M11Image, M12ForeignKey, M13ForeignKeySelf,
     M14ManyToMany, M15OneToOne, M16Unique, M17ForeignKeyVersioned,
     M18OneToOneFieldVersioned, M19ManyToManyFieldVersioned,
     M20CustomManager, M21CustomAttribute,
@@ -374,5 +362,6 @@ TEST_MODELS = [
     M26SubclassConcreteB, M26ConcreteModelC, M26SubclassConcreteC,
     MUniqueAndFK, MUniqueAndFK2,
     NonVersionedModel, M27FKToNonVersioned,
-    M28OneToOneNonVersioned,
+    M28OneToOneNonVersioned, M29FKToNonVersionedRelatedName,
+    M30OneToOneNonVersionedRelatedName, M31M2MNonVersionedRelatedName,
 ]
