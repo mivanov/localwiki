@@ -68,8 +68,7 @@ class AddAttributeForm(ModelForm):
     def __init__(self, *args, **kwargs):
         # we want to exclude attributes the entity already has
         super(AddAttributeForm, self).__init__(*args, **kwargs)
-        config_cls = self.instance._eav_config_cls
-        self.entity = getattr(self.instance, config_cls.eav_attr)
+        self.entity = self.instance.eav
         already_has = [v.attribute.pk for v in self.entity.get_values()]
         self.fields['attribute'].queryset = PageAttribute.objects.exclude(
                                                             pk__in=already_has)
@@ -82,8 +81,8 @@ class AddAttributeForm(ModelForm):
 class AttributeCreateForm(ModelForm):
     class Meta:
         model = PageAttribute
-        fields = ('name', 'description', 'datatype', 'enum_group')
-        exclude = ('site', 'slug',)
+        fields = ('name', 'description', 'type', 'enum_group')
+        exclude = ('site', 'slug')
 
     def save(self, *args, **kwargs):
         # tie attributes to Page model on save
