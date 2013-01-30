@@ -64,6 +64,16 @@ def render_schedule(schedule):
     return render_to_string('infobox/weekly_schedule.html', params)
 
 
+def render_link(link):
+    """
+    Render the link as HTML.
+    """
+    if link is None:
+        return '<p></p>'
+    link = escape(link)
+    return '<a href="%s">%s</a>' % (link, link)
+
+
 def render_attribute(attribute, value):
     """
     Render the attribute value nicely, taking into account its type. Returns a
@@ -80,6 +90,8 @@ def render_attribute(attribute, value):
         rendered = render_schedule(value)
     elif attribute.type == attribute.TYPE_BOOLEAN:
         rendered = {True: _('Yes'), False: _('No'), None: rendered}.get(value)
+    elif attribute.type == 'link':
+        rendered = render_link(value)
     elif value:
         rendered = escape(value)
     return mark_safe(rendered)

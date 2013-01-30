@@ -7,15 +7,9 @@ from django.utils.translation import ugettext_lazy as _
 from eav.forms import BaseDynamicEntityForm
 
 from pages.models import Page
-from infobox.models import WeeklySchedule, WeeklyTimeBlock, PageLink,\
-    PageAttribute
+from infobox.models import WeeklySchedule, WeeklyTimeBlock, PageAttribute
 from widgets import DateTimeWidget, TimeWidget
-from django.forms.fields import TimeField
-
-
-class PageLinkForm(ModelForm):
-    class Meta:
-        model = PageLink
+from django.forms.fields import TimeField, CharField
 
 
 class WeeklyTimeBlockForm(ModelForm):
@@ -48,9 +42,9 @@ class DateTimeField(forms.DateTimeField):
 
 class InfoboxForm(BaseDynamicEntityForm):
     CUSTOM_FIELD_CLASSES = {
+        'link': CharField,
         'date': DateTimeField,
         'schedule': WeeklyScheduleForm,
-        'page': PageLinkForm,
     }
 
     def get_field_class_for_type(self, type):

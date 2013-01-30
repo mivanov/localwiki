@@ -5,13 +5,10 @@ from django.utils.dates import WEEKDAYS
 
 import eav
 from eav.models import BaseAttribute, BaseValue, EnumValue, EnumGroup, Entity
+from eav.fields import proxy_property
 
 from versionutils import versioning
 from pages.models import Page
-
-
-class PageLink(models.Model):
-    page_name = models.CharField(max_length=255, blank=True, null=True)
 
 
 class WeeklySchedule(models.Model):
@@ -72,12 +69,17 @@ class PageValue(BaseValue, CommentMixin): ## workaround, mixin should be first
         verbose_name=_(u"attribute"))
     entity = models.ForeignKey(Page, blank=False, null=False)
 
-    value_page = models.OneToOneField(PageLink, blank=True,
-        null=True, verbose_name=_(u"page link"), related_name='eav_value')
     value_schedule = models.OneToOneField(WeeklySchedule, blank=True,
         null=True, verbose_name=_(u"weekly schedule"),
         related_name='eav_value')
 
+    value_link = proxy_property('value_text')
+
+    @classmethod
+    def get_type_choices(cls):
+        proxy_types = [('link', _(u"link"))]
+        return BaseValue.get_type_choices() + proxy_types
+        
     ## workaround for versionutils not working with model mixins
     def save(self, *args, **kwargs):
         CommentMixin.save(self, *args, **kwargs)
@@ -127,7 +129,6 @@ eav.register(Page, PageAttribute, PageValue)
 
 versioning.register(EnumGroup)
 versioning.register(EnumValue)
-versioning.register(PageLink)
 versioning.register(WeeklySchedule)
 versioning.register(WeeklyTimeBlock)
 versioning.register(PageAttribute)
