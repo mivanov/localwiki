@@ -1,0 +1,44 @@
+{% extends "import_info/base.html" %}
+
+{% block title %}Overview{% endblock %}
+{% block heading %}Overview{% endblock %}
+{% block description %}Decide which attributes you want to import.{% endblock %}
+{% block content %}
+{% for attr in attributes %}
+<table>
+    <tbody>
+        <tr><th>Attribute name:</th><td>{{ attr.name }}</td></tr>
+        <tr><th>Count:</th><td>{{ attr.count }} values</td></tr>
+        <tr><th>Sample values:</th><td>
+            <table>
+                <tbody>
+                    {% for ex in attr.values.values|slice:":5" %}
+                        <tr><td>{{ ex }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </td></tr>
+        <tr><td>
+                <form method="POST" action="{% url import_info:import_attribute %}">
+                {% csrf_token %}
+                <input type="hidden" name="original_name" value="{{ attr.name }}">
+                {% for p, v in attr.values.items %}
+                    <input type="hidden" name="page" value="{{ p }}">
+                    <input type="hidden" name="value" value="{{ v }}">
+                {% endfor %}
+                <input type="submit" value="Import">
+                </form>
+            </td>
+            <td>
+                <form method="POST" action="{% url import_info:tag_pages %}">
+                {% csrf_token %}
+                <input type="hidden" name="tag" value="Needs cleanup">
+                <textarea name="pages" style="display: none;">{{ attr.values.keys|join:"&#10;" }}</textarea>
+                <input type="submit" value='Tag {{ attr.count }} pages with "Needs cleanup"'>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endfor %}
+{% endblock %}

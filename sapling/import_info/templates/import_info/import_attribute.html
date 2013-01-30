@@ -1,0 +1,24 @@
+{% extends "import_info/base.html" %}
+
+{% block title %}Import attribute{% endblock %}
+{% block heading %}Import attribute{% endblock %}
+{% block description %}Set the import options and import this attribute{% endblock %}
+{% block content %}
+{% with attribute as attr %}
+<table>
+    <tbody>
+        <tr><th>Attribute name:</th><td>{{ attr.name }}</td></tr>
+        <tr><th>Count:</th><td>{{ attr.count }} values</td></tr>
+        <tr><th>Values:</th><td>
+            <table>
+                <tbody>
+                    {% for ex in attr.values.values %}
+                        <tr><td>{{ ex }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </td></tr>
+    </tbody>
+</table>
+{% endwith %}
+{% endblock %}

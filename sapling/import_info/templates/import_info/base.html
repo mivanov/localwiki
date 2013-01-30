@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <style>
+            table {
+                margin: 1em;
+            }
+            table th {
+                text-align: right;
+                vertical-align: top;
+            }
+            table table td{
+                max-width: 800px;
+                border: 1px solid grey;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>{% block heading %}{% endblock %}</h1>
+        <p>{% block description %}{% endblock %}</p>
+        <div>
+            {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>

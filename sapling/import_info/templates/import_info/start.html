@@ -1,0 +1,12 @@
+{% extends "import_info/base.html" %}
+
+{% block title %}Start import{% endblock %}
+{% block heading %}Start import{% endblock %}
+{% block description %}Select a CSV file that contains the extracted info and press Upload.{% endblock %}
+{% block content %}
+<form method="POST" action="{% url import_info:upload-csv %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="csv_file"/>
+    <input type="submit" value="Upload"/>
+</form>
+{% endblock %}
